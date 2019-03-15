@@ -24,4 +24,6 @@ public abstract class ElementMap {
     public float getY() {
         return posY;
     }
+
+    public void setPosX(float posX) { this.posX = posX; }
 }
