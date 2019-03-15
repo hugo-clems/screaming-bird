@@ -9,37 +9,60 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity" android:screenOrientation="landscape">
+        <activity android:name=".jeu.TestActivity"></activity>
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".CreateurNiveauActivity" android:parentActivityName=".MainActivity" android:screenOrientation="landscape" android:label="@string/title_createur_niveau">
+        <activity
+            android:name=".CreateurNiveauActivity"
+            android:label="@string/title_createur_niveau"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="landscape">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-        <activity android:name=".ScoreboardActivity" android:parentActivityName=".MainActivity" android:screenOrientation="landscape" android:label="@string/title_scoreboard">
+        <activity
+            android:name=".ScoreboardActivity"
+            android:label="@string/title_scoreboard"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="landscape">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-        <activity android:name=".SelecteurNiveauActivity" android:parentActivityName=".MainActivity" android:screenOrientation="landscape" android:label="@string/title_selecteur_niveau">
+        <activity
+            android:name=".SelecteurNiveauActivity"
+            android:label="@string/title_selecteur_niveau"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="landscape">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-        <activity android:name=".JeuActivity" android:parentActivityName=".SelecteurNiveauActivity" android:screenOrientation="landscape" android:label="@string/title_jeu">
+        <activity
+            android:name=".jeu.JeuActivity"
+            android:label="@string/title_jeu"
+            android:parentActivityName=".SelecteurNiveauActivity"
+            android:screenOrientation="landscape">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".SelecteurNiveauActivity" />
         </activity>
-        <activity android:name=".FinDeJeuActivity" android:parentActivityName=".JeuActivity" android:screenOrientation="landscape" android:label="@string/title_fin_de_jeu">
+        <activity
+            android:name=".FinDeJeuActivity"
+            android:label="@string/title_fin_de_jeu"
+            android:parentActivityName=".jeu.JeuActivity"
+            android:screenOrientation="landscape">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".JeuActivity" />
+                android:value=".jeu.JeuActivity" />
         </activity>
     </application>
 

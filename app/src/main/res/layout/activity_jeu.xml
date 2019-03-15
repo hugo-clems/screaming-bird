@@ -4,6 +4,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".JeuActivity">
+    tools:context=".jeu.JeuActivity">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+
+        <view
+            android:id="@+id/zoneDeJeu"
+            class="hutoch.m2dl.screamingbird.jeu.JeuActivity$AnimatedView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </LinearLayout>
 </android.support.constraint.ConstraintLayout>
