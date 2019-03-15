@@ -108,7 +108,7 @@ public class CreateurNiveauActivity extends AppCompatActivity implements OnTouch
                 break;
             case DragEvent.ACTION_DROP:
                 if(idDragged == idObstacle) {
-                    listeObstacles.add(new Obstacle(dragevent.getX() - obstacleSizeX/2, dragevent.getY() - obstacleSizeY/5));
+                    listeObstacles.add(new Obstacle(dragevent.getX() - obstacleSizeX/2, dragevent.getY() - obstacleSizeY/10));
                 } else if (idDragged == idFinishLine) {
                     finishLine = new FinishLine(dragevent.getX() - finishLineSizeX/2, dragevent.getY() - finishLineSizeY/2);
                 }
