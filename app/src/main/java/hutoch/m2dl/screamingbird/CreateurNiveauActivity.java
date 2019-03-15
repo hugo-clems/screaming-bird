@@ -39,11 +39,11 @@ public class CreateurNiveauActivity extends AppCompatActivity implements OnTouch
     public AnimatedView animatedView = null;
     public int posX = 0;
     public int oldX = 0;
-    public int obstacleSizeX = 500;
+    public int obstacleSizeX = 300;
     public int obstacleSizeY = 1000;
     public int finishLineSizeX = 200;
     public int finishLineSizeY = 200;
-    public static FinishLine finishLine = null;
+    public static FinishLine finishLine;
     public int idObstacle;
     public int idFinishLine;
     public int idDragged;
@@ -64,6 +64,7 @@ public class CreateurNiveauActivity extends AppCompatActivity implements OnTouch
         buttonOK.setOnTouchListener(this);
         animatedView = findViewById(R.id.zoneDeJeu);
         animatedView.setOnTouchListener(this);
+        finishLine = null;
 
         idObstacle = findViewById(R.id.obstacle).getId();
         idFinishLine = findViewById(R.id.finish).getId();
@@ -85,6 +86,7 @@ public class CreateurNiveauActivity extends AppCompatActivity implements OnTouch
                 buttonOK.setEnabled(false);
                 prepareObstaclesForSave();
                 saveLevel();
+                finish();
             } else {
                 if(motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
                     idDragged = view.getId();
@@ -127,7 +129,7 @@ public class CreateurNiveauActivity extends AppCompatActivity implements OnTouch
                 break;
             case DragEvent.ACTION_DROP:
                 if(idDragged == idObstacle) {
-                    listeObstacles.add(new Obstacle(dragevent.getX() - obstacleSizeX/2, dragevent.getY() - obstacleSizeY/3));
+                    listeObstacles.add(new Obstacle(dragevent.getX() - obstacleSizeX/2, dragevent.getY() - obstacleSizeY/10));
                 } else if (idDragged == idFinishLine) {
                     finishLine = new FinishLine(dragevent.getX() - finishLineSizeX/2, dragevent.getY() - finishLineSizeY/2);
                     buttonOK.setEnabled(true);
