@@ -54,12 +54,15 @@ public class JeuActivity extends Activity implements View.OnTouchListener, Senso
     public static int personnagePositionTop;
 
     // Element du décor
-    public static Bitmap square;
-    public static Obstacle obstacle;
-    public static final int TAILLE_OBSTACLE = 154;
+    public static Bitmap obstacle;
     public static FinishLine finishLine;
+    public static final int LARGEUR_OBSTACLE = 154;
+    public static final int HAUTEUR_OBSTACLE = 1000;
     public static ArrayList<Obstacle> listeObstacles;
     private final String OBSTACLE_TYPE = "OBSTACLE";
+    public static Bitmap finishLineBitmap;
+    public static final int LARGEUR_FINISH_LINE = 200;
+    public static final int HAUTEUR_FINISH_LINE = 200;
 
     // Vies
     public static Bitmap coeur;
@@ -101,13 +104,12 @@ public class JeuActivity extends Activity implements View.OnTouchListener, Senso
 
         levelId = (int) getIntent().getSerializableExtra("levelId");
 
+        listeObstacles = new ArrayList<>();
+        loadLevel();
+
         this.animatedView = findViewById(R.id.zoneDeJeu);
         this.animatedView.setOnTouchListener(this);
         this.animatedView.init();
-
-        listeObstacles = new ArrayList<>();
-
-        loadLevel();
 
         if (!hasMicroPermission()) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, 1);
@@ -144,6 +146,7 @@ public class JeuActivity extends Activity implements View.OnTouchListener, Senso
             if (compteurJump < 35) {
                 personnagePositionTop -= 10;
                 compteurJump++;
+                isOnFinishLine();
                 handler.postDelayed(jump, VITESSE);
             } else {
                 compteurJump = 0;
@@ -163,6 +166,7 @@ public class JeuActivity extends Activity implements View.OnTouchListener, Senso
                 } else {
                     personnagePositionTop += 10;
                     handler.postDelayed(fall, VITESSE);
+                    isOnFinishLine();
                 }
             } else {
                 canJump = true;
@@ -178,9 +182,11 @@ public class JeuActivity extends Activity implements View.OnTouchListener, Senso
         int posX = personnagePositionLeft + LARGEUR_PERSONNAGE / 2;
         int posY = personnagePositionTop + HAUTEUR_PERSONNAGE;
 
-        if (posX > obstacle.getX() && posX < obstacle.getX() + TAILLE_OBSTACLE
-                && posY > obstacle.getY() && posY < obstacle.getY() + TAILLE_OBSTACLE) {
-            return true;
+        for (Obstacle square : listeObstacles) {
+            if (posX > square.getX() && posX < square.getX() + LARGEUR_OBSTACLE
+                    && posY > square.getY() && posY < square.getY() + 11) {
+                return true;
+            }
         }
 
         return false;
@@ -193,17 +199,35 @@ public class JeuActivity extends Activity implements View.OnTouchListener, Senso
     private boolean isOnDeathZone() {
         int posY = personnagePositionTop + HAUTEUR_PERSONNAGE;
 
-        if (posY > screenHeight && posY < screenHeight + TAILLE_OBSTACLE) {
+        if (posY > screenHeight && posY < screenHeight + LARGEUR_OBSTACLE) {
             return true;
         }
 
         return false;
     }
 
+    /**
+     * Quand on touche la finish line.
+     */
+    private void isOnFinishLine() {
+        int posX = personnagePositionLeft + LARGEUR_PERSONNAGE / 2;
+        int posY = personnagePositionTop + HAUTEUR_PERSONNAGE;
+
+        if (posX > finishLine.getX() && posX < finishLine.getX() + LARGEUR_FINISH_LINE
+                && posY > finishLine.getY() && posY < finishLine.getY() + HAUTEUR_FINISH_LINE) {
+            Intent intent = new Intent(this, FinDeJeuActivity.class);
+            intent.putExtra("score", 0);
+            intent.putExtra("nbVies", nbVies);
+            startActivity(intent);
+        }
+    }
+
     private void killPersonnage() {
         if (nbVies > 1) {
             nbVies--;
-            canJump = true; // TODO respawn
+            personnagePositionLeft = 0;
+            personnagePositionTop = 0;
+            canJump = true;
         } else {
             // Redirection vers l'écran de GameOver
             Intent intent = new Intent(this, GameOverActivity.class);
@@ -238,14 +262,18 @@ public class JeuActivity extends Activity implements View.OnTouchListener, Senso
             personnage = BitmapFactory.decodeResource(getResources(), R.drawable.bird);
             Drawable d = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(personnage, LARGEUR_PERSONNAGE, HAUTEUR_PERSONNAGE, true));
             personnage = ((BitmapDrawable) d).getBitmap();
-            personnagePositionLeft = screenWidth / 2;
-            personnagePositionTop = screenHeight - HAUTEUR_PERSONNAGE;
+            personnagePositionLeft = 0;
+            personnagePositionTop = 0;
 
             // Obstacle
-            square = BitmapFactory.decodeResource(getResources(), R.drawable.square);
-            Drawable d2 = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(square, TAILLE_OBSTACLE, TAILLE_OBSTACLE, true));
-            square = ((BitmapDrawable) d2).getBitmap();
-            obstacle = new Obstacle(personnagePositionLeft, personnagePositionTop - TAILLE_OBSTACLE);
+            obstacle = BitmapFactory.decodeResource(getResources(), R.drawable.square);
+            Drawable d2 = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(obstacle, LARGEUR_OBSTACLE, HAUTEUR_OBSTACLE, true));
+            obstacle = ((BitmapDrawable) d2).getBitmap();
+
+            // Finishline
+            finishLineBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.finishline);
+            Drawable dF = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(finishLineBitmap, LARGEUR_FINISH_LINE, HAUTEUR_FINISH_LINE, true));
+            finishLineBitmap = ((BitmapDrawable) dF).getBitmap();
 
             // Coeur
             coeur = BitmapFactory.decodeResource(getResources(), R.drawable.coeur);
@@ -256,10 +284,17 @@ public class JeuActivity extends Activity implements View.OnTouchListener, Senso
         @Override
         protected void onDraw(Canvas canvas) {
             canvas.drawBitmap(personnage, personnagePositionLeft, personnagePositionTop, null);
-            canvas.drawBitmap(square, obstacle.getX(), obstacle.getY(), null);
+
             for (int i = 1; i <= nbVies; i++) {
                 canvas.drawBitmap(coeur, screenWidth - TAILLE_COEUR*i, 0, null);
             }
+
+            for (Obstacle square : listeObstacles) {
+                canvas.drawBitmap(obstacle, square.getX(), square.getY(), null);
+            }
+
+            canvas.drawBitmap(finishLineBitmap, finishLine.getX(), finishLine.getY(), null);
+
             invalidate();
         }
 
@@ -291,12 +326,12 @@ public class JeuActivity extends Activity implements View.OnTouchListener, Senso
                 null               // The sort order
         );
 
-        while(cursor.moveToNext()) {
+        while (cursor.moveToNext()) {
             float x = cursor.getLong(cursor.getColumnIndexOrThrow(LevelContract.ObstacleEntry.COLUMN_NAME_X));
             float y = cursor.getLong(cursor.getColumnIndexOrThrow(LevelContract.ObstacleEntry.COLUMN_NAME_Y));
             String type = cursor.getString(cursor.getColumnIndexOrThrow(LevelContract.ObstacleEntry.COLUMN_NAME_TYPE));
 
-            if(OBSTACLE_TYPE.equals(type)) {
+            if (OBSTACLE_TYPE.equals(type)) {
                 listeObstacles.add(new Obstacle(x, y));
             } else {
                 finishLine = new FinishLine(x, y);
@@ -365,8 +400,12 @@ public class JeuActivity extends Activity implements View.OnTouchListener, Senso
     public void onSensorChanged(SensorEvent event) {
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             int xValue = (int) event.values[1];
-            obstacle.setRate(xValue);
-            obstacle.tick();
+            for (Obstacle square : listeObstacles) {
+                square.setRate(xValue);
+                square.tick();
+            }
+            finishLine.setRate(xValue);
+            finishLine.tick();
         }
     }
 
