@@ -1,15 +1,24 @@
 package hutoch.m2dl.screamingbird.jeu;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.PowerManager;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Display;
@@ -21,7 +30,7 @@ import hutoch.m2dl.screamingbird.R;
 /**
  * Ecran de jeu.
  */
-public class JeuActivity extends Activity implements View.OnTouchListener {
+public class JeuActivity extends Activity implements View.OnTouchListener, SensorEventListener {
 
     public AnimatedView animatedView = null;
     public static int screenWidth;
@@ -42,8 +51,19 @@ public class JeuActivity extends Activity implements View.OnTouchListener {
 
     // Le saut
     public Handler handler = new Handler();
-    public boolean canTouch = true;
+    public boolean canJump = true;
     public int compteurJump = 0;
+
+    // Son
+    private static final int MIN_NOISE = 70;
+    private static final int NOISE_POLL_INTERVAL = 300;
+    private DetectNoise noiseSensor;
+    private Handler noiseHandler = new Handler();
+    private PowerManager.WakeLock mWakeLock;
+    private boolean permissionsOK = false;
+    private boolean noiseRunning = false;
+    private SensorManager sensorManager;
+    private int noiseAct;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +80,15 @@ public class JeuActivity extends Activity implements View.OnTouchListener {
         this.animatedView = findViewById(R.id.zoneDeJeu);
         this.animatedView.setOnTouchListener(this);
         this.animatedView.init();
+
+        if (!hasMicroPermission()) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, 1);
+        } else {
+            permissionsOK = true;
+            noiseSensor = new DetectNoise();
+            PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+            mWakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "Noise:Alert");
+        }
     }
 
     /**
@@ -70,8 +99,8 @@ public class JeuActivity extends Activity implements View.OnTouchListener {
      */
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        if (canTouch) {
-            canTouch = false;
+        if (canJump) {
+            canJump = false;
             handler.postDelayed(jump, VITESSE);
         }
         return false;
@@ -102,7 +131,7 @@ public class JeuActivity extends Activity implements View.OnTouchListener {
                 personnagePositionTop += 10;
                 handler.postDelayed(fall, VITESSE);
             } else {
-                canTouch = true;
+                canJump = true;
             }
         }
     };
@@ -163,6 +192,92 @@ public class JeuActivity extends Activity implements View.OnTouchListener {
             invalidate();
         }
 
+    }
+
+    /* ***** Capteur Sonore ***** */
+
+    private void updateNoise(int signalEMA) {
+        if (Math.abs(signalEMA) > MIN_NOISE) {
+            noiseAct = signalEMA;
+            if (canJump) {
+                canJump = false;
+                handler.postDelayed(jump, VITESSE);
+            }
+        }
+    }
+
+    public boolean hasMicroPermission() {
+        return ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private Runnable noiseSleepTask = new Runnable() {
+        public void run() {
+            startNoiseSensor();
+        }
+    };
+
+    private Runnable noisePollTask = new Runnable() {
+        public void run() {
+            updateNoise(noiseSensor.getAmplitude());
+            noiseHandler.postDelayed(noisePollTask, NOISE_POLL_INTERVAL);
+        }
+    };
+
+    /**
+     * Démarre le détecteur de bruits.
+     */
+    private void startNoiseSensor() {
+        noiseSensor.start();
+        if (!mWakeLock.isHeld()) {
+            mWakeLock.acquire();
+        }
+
+        noiseHandler.postDelayed(noisePollTask, NOISE_POLL_INTERVAL);
+    }
+
+    /**
+     * Arrête le détecteur de bruits.
+     */
+    private void stopNoiseSensor() {
+        if (mWakeLock.isHeld()) {
+            mWakeLock.release();
+        }
+        noiseHandler.removeCallbacks(noiseSleepTask);
+        noiseHandler.removeCallbacks(noisePollTask);
+        noiseSensor.stop();
+        updateNoise(0);
+        noiseRunning = false;
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        // Non utilisé
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        // Non utilisé
+    }
+
+    /* ***** Gestion Appli ***** */
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (permissionsOK) {
+            sensorManager.unregisterListener(this);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (permissionsOK) {
+            if (!noiseRunning) {
+                noiseRunning = true;
+                startNoiseSensor();
+            }
+        }
     }
 
 }
