@@ -57,4 +57,9 @@ public class FinDeJeuActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    @Override
+    public void onBackPressed() {
+        return;
+    }
+
 }
