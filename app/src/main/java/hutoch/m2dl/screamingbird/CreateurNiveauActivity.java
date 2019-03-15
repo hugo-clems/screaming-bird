@@ -19,6 +19,7 @@ import android.view.View.OnDragListener;
 import android.view.View.OnTouchListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -83,10 +84,15 @@ public class CreateurNiveauActivity extends AppCompatActivity implements OnTouch
     public boolean onTouch(View view, MotionEvent motionEvent) {
         if(!view.equals(animatedView)) {
             if (view.equals(buttonOK)) {
-                buttonOK.setEnabled(false);
-                prepareObstaclesForSave();
-                saveLevel();
-                finish();
+                if (listeObstacles != null && !listeObstacles.isEmpty()) {
+                    buttonOK.setEnabled(false);
+                    prepareObstaclesForSave();
+                    saveLevel();
+                    finish();
+                } else {
+                    Toast.makeText(getApplicationContext(),"Veuillez insérer au moins un obstacle",
+                            Toast.LENGTH_SHORT).show();
+                }
             } else {
                 if(motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
                     idDragged = view.getId();
