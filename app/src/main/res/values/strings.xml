@@ -1,3 +1,24 @@
 <resources>
     <string name="app_name">ScreamingBird</string>
+
+    <!-- MainActivity -->
+    <string name="btn_param">Paramètres</string>
+    <string name="btn_jouer">Jouer</string>
+    <string name="btn_creer_niveau">Créer un niveau</string>
+    <string name="btn_scoreboard">Tableaux des scores</string>
+
+    <!-- CreateurNiveauActivity -->
+    <string name="title_createur_niveau">Créer un niveau</string>
+
+    <!-- ScoreboardNiveauActivity -->
+    <string name="title_scoreboard">Tableau des scores</string>
+
+    <!-- SelecteurNiveauActivity -->
+    <string name="title_selecteur_niveau">Choisir un niveau</string>
+
+    <!-- JeuActivity -->
+    <string name="title_jeu">Jeu en cours</string>
+
+    <!-- FinDeJeuActivity -->
+    <string name="title_fin_de_jeu">Partie terminée !</string>
 </resources>

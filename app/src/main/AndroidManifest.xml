@@ -16,27 +16,27 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".CreateurNiveauActivity" android:parentActivityName=".MainActivity" android:screenOrientation="landscape">
+        <activity android:name=".CreateurNiveauActivity" android:parentActivityName=".MainActivity" android:screenOrientation="landscape" android:label="@string/title_createur_niveau">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-        <activity android:name=".ScoreboardActivity" android:parentActivityName=".MainActivity" android:screenOrientation="landscape">
+        <activity android:name=".ScoreboardActivity" android:parentActivityName=".MainActivity" android:screenOrientation="landscape" android:label="@string/title_scoreboard">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-        <activity android:name=".SelecteurNiveauActivity" android:parentActivityName=".MainActivity" android:screenOrientation="landscape">
+        <activity android:name=".SelecteurNiveauActivity" android:parentActivityName=".MainActivity" android:screenOrientation="landscape" android:label="@string/title_selecteur_niveau">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-        <activity android:name=".JeuActivity" android:parentActivityName=".SelecteurNiveauActivity" android:screenOrientation="landscape">
+        <activity android:name=".JeuActivity" android:parentActivityName=".SelecteurNiveauActivity" android:screenOrientation="landscape" android:label="@string/title_jeu">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".SelecteurNiveauActivity" />
         </activity>
-        <activity android:name=".FinDeJeuActivity" android:parentActivityName=".JeuActivity" android:screenOrientation="landscape">
+        <activity android:name=".FinDeJeuActivity" android:parentActivityName=".JeuActivity" android:screenOrientation="landscape" android:label="@string/title_fin_de_jeu">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".JeuActivity" />
