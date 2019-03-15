@@ -13,7 +13,7 @@ public class Obstacle {
     }
 
     public void tick() {
-        posY += rate;
+        posX += rate;
     }
 
     public float getX() {
@@ -30,5 +30,13 @@ public class Obstacle {
 
     public void setPosY(float posY) {
         this.posY = posY;
+    }
+
+    public float getRate() {
+        return rate;
+    }
+
+    public void setRate(float rate) {
+        this.rate = rate;
     }
 }

@@ -18,6 +18,8 @@
 
     <!-- JeuActivity -->
     <string name="title_jeu">Jeu en cours</string>
+    <string name="btnSoundMoins">-</string>
+    <string name="btnSoundPlus">+</string>
 
     <!-- FinDeJeuActivity -->
     <string name="title_fin_de_jeu">Partie terminée !</string>

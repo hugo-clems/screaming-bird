@@ -55,7 +55,7 @@ public class JeuActivity extends Activity implements View.OnTouchListener, Senso
     public int compteurJump = 0;
 
     // Son
-    private static final int MIN_NOISE = 70;
+    private static final int MIN_NOISE = 80;
     private static final int NOISE_POLL_INTERVAL = 300;
     private DetectNoise noiseSensor;
     private Handler noiseHandler = new Handler();
@@ -64,6 +64,9 @@ public class JeuActivity extends Activity implements View.OnTouchListener, Senso
     private boolean noiseRunning = false;
     private SensorManager sensorManager;
     private int noiseAct;
+
+    // Accelero
+    private Sensor accelerometer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,6 +92,8 @@ public class JeuActivity extends Activity implements View.OnTouchListener, Senso
             PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
             mWakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "Noise:Alert");
         }
+        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
     }
 
     /**
@@ -251,7 +256,12 @@ public class JeuActivity extends Activity implements View.OnTouchListener, Senso
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        // Non utilisé
+        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            Log.i("coucou", "ça bouge");
+            int xValue = (int) event.values[1];
+            obstacle.setRate(xValue);
+            obstacle.tick();
+        }
     }
 
     @Override
@@ -278,6 +288,8 @@ public class JeuActivity extends Activity implements View.OnTouchListener, Senso
                 startNoiseSensor();
             }
         }
+        sensorManager.registerListener(this, accelerometer,
+                SensorManager.SENSOR_DELAY_GAME);
     }
 
 }
