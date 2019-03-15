@@ -30,7 +30,7 @@ public class CreateurNiveauActivity extends AppCompatActivity implements OnTouch
     public AnimatedView animatedView = null;
     public int posX = 0;
     public int oldX = 0;
-    public int obstacleSizeX = 500;
+    public int obstacleSizeX = 300;
     public int obstacleSizeY = 1000;
     public int finishLineSizeX = 200;
     public int finishLineSizeY = 200;
@@ -108,7 +108,7 @@ public class CreateurNiveauActivity extends AppCompatActivity implements OnTouch
                 break;
             case DragEvent.ACTION_DROP:
                 if(idDragged == idObstacle) {
-                    listeObstacles.add(new Obstacle(dragevent.getX() - obstacleSizeX/2, dragevent.getY() - obstacleSizeY/3));
+                    listeObstacles.add(new Obstacle(dragevent.getX() - obstacleSizeX/2, dragevent.getY() - obstacleSizeY/5));
                 } else if (idDragged == idFinishLine) {
                     finishLine = new FinishLine(dragevent.getX() - finishLineSizeX/2, dragevent.getY() - finishLineSizeY/2);
                 }
