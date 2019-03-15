@@ -56,7 +56,7 @@ public class JeuActivity extends Activity implements View.OnTouchListener, Senso
     // Element du décor
     public static Bitmap obstacle;
     public static FinishLine finishLine;
-    public static final int LARGEUR_OBSTACLE = 154;
+    public static final int LARGEUR_OBSTACLE = 300;
     public static final int HAUTEUR_OBSTACLE = 1000;
     public static ArrayList<Obstacle> listeObstacles;
     private final String OBSTACLE_TYPE = "OBSTACLE";
@@ -178,7 +178,7 @@ public class JeuActivity extends Activity implements View.OnTouchListener, Senso
      * Quand on touche l'obstacle.
      * @return true si on touche l'obstacle, false sinon
      */
-    private boolean isOnObstacle() {
+    private static boolean isOnObstacle() {
         int posX = personnagePositionLeft + LARGEUR_PERSONNAGE / 2;
         int posY = personnagePositionTop + HAUTEUR_PERSONNAGE;
 
@@ -294,6 +294,10 @@ public class JeuActivity extends Activity implements View.OnTouchListener, Senso
             }
 
             canvas.drawBitmap(finishLineBitmap, finishLine.getX(), finishLine.getY(), null);
+
+            if(!isOnObstacle()) {
+                personnagePositionTop += 1;
+            }
 
             invalidate();
         }
