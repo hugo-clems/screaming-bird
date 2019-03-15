@@ -3,10 +3,16 @@ package hutoch.m2dl.screamingbird.utils;
 public abstract class ElementMap {
     private float posX;
     private float posY;
+    private float rate;
 
     public ElementMap(float x, float y) {
         posX = x;
         posY = y;
+        rate = 0;
+    }
+
+    public void tick() {
+        posX += rate;
     }
 
     public void toLeft() {
@@ -23,5 +29,9 @@ public abstract class ElementMap {
 
     public float getY() {
         return posY;
+    }
+
+    public void setRate(float rate) {
+        this.rate = rate;
     }
 }

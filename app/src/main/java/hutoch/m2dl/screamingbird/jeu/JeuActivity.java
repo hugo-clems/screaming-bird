@@ -26,6 +26,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import hutoch.m2dl.screamingbird.R;
+import hutoch.m2dl.screamingbird.utils.Obstacle;
 
 /**
  * Ecran de jeu.
