@@ -29,14 +29,16 @@ public class JeuActivity extends Activity implements View.OnTouchListener {
 
     // Personnage
     public static Bitmap personnage;
-    public static final int taillePersonnage = 120;
+    public static final int HAUTEUR_PERSONNAGE = 100;
+    public static final int LARGEUR_PERSONNAGE = 200;
+    public static final int VITESSE = 2;
     public static int personnagePositionLeft;
     public static int personnagePositionTop;
 
     // Element du décor
     public static Bitmap square;
     public static Obstacle obstacle;
-    public static final int tailleObstacle = 250;
+    public static final int TAILLE_OBSTACLE = 154;
 
     // Le saut
     public Handler handler = new Handler();
@@ -48,15 +50,16 @@ public class JeuActivity extends Activity implements View.OnTouchListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_jeu);
 
-        this.animatedView = findViewById(R.id.zoneDeJeu);
-        this.animatedView.setOnTouchListener(this);
-
         // Récupération de la taille de l'écran
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
         screenWidth = size.x;
         screenHeight = size.y;
+
+        this.animatedView = findViewById(R.id.zoneDeJeu);
+        this.animatedView.setOnTouchListener(this);
+        this.animatedView.init();
     }
 
     /**
@@ -69,7 +72,7 @@ public class JeuActivity extends Activity implements View.OnTouchListener {
     public boolean onTouch(View v, MotionEvent event) {
         if (canTouch) {
             canTouch = false;
-            handler.postDelayed(jump, 2);
+            handler.postDelayed(jump, VITESSE);
         }
         return false;
     }
@@ -82,10 +85,10 @@ public class JeuActivity extends Activity implements View.OnTouchListener {
             if (compteurJump < 35) {
                 personnagePositionTop -= 10;
                 compteurJump++;
-                handler.postDelayed(jump, 2);
+                handler.postDelayed(jump, VITESSE);
             } else {
                 compteurJump = 0;
-                handler.postDelayed(fall, 2);
+                handler.postDelayed(fall, VITESSE);
             }
         }
     };
@@ -97,7 +100,7 @@ public class JeuActivity extends Activity implements View.OnTouchListener {
         public void run() {
             if (!isOnObstacle()) {
                 personnagePositionTop += 10;
-                handler.postDelayed(fall, 2);
+                handler.postDelayed(fall, VITESSE);
             } else {
                 canTouch = true;
             }
@@ -109,11 +112,11 @@ public class JeuActivity extends Activity implements View.OnTouchListener {
      * @return true si on touche l'obstacle, false sinon
      */
     private boolean isOnObstacle() {
-        int posX = personnagePositionLeft + taillePersonnage / 2;
-        int posY = personnagePositionTop + taillePersonnage / 2;
+        int posX = personnagePositionLeft + LARGEUR_PERSONNAGE / 2;
+        int posY = personnagePositionTop + HAUTEUR_PERSONNAGE;
 
-        if (posX > obstacle.getX() && posX < obstacle.getX() + tailleObstacle
-                && posY > obstacle.getY() && posY < obstacle.getY() + tailleObstacle) {
+        if (posX > obstacle.getX() && posX < obstacle.getX() + TAILLE_OBSTACLE
+                && posY > obstacle.getY() && posY < obstacle.getY() + TAILLE_OBSTACLE) {
             return true;
         }
 
@@ -140,17 +143,17 @@ public class JeuActivity extends Activity implements View.OnTouchListener {
             init();
         }
 
-        private void init() {
-            personnage = BitmapFactory.decodeResource(getResources(), R.drawable.note);
-            Drawable d = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(personnage, taillePersonnage, taillePersonnage, true));
+        public void init() {
+            personnage = BitmapFactory.decodeResource(getResources(), R.drawable.bird);
+            Drawable d = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(personnage, LARGEUR_PERSONNAGE, HAUTEUR_PERSONNAGE, true));
             personnage = ((BitmapDrawable) d).getBitmap();
             personnagePositionLeft = screenWidth / 2;
-            personnagePositionTop = screenHeight - taillePersonnage;
+            personnagePositionTop = screenHeight - HAUTEUR_PERSONNAGE;
 
             square = BitmapFactory.decodeResource(getResources(), R.drawable.square);
-            Drawable d2 = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(square, tailleObstacle, tailleObstacle, true));
+            Drawable d2 = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(square, TAILLE_OBSTACLE, TAILLE_OBSTACLE, true));
             square = ((BitmapDrawable) d2).getBitmap();
-            obstacle = new Obstacle(personnagePositionLeft, personnagePositionTop - tailleObstacle);
+            obstacle = new Obstacle(personnagePositionLeft, personnagePositionTop - TAILLE_OBSTACLE);
         }
 
         @Override
