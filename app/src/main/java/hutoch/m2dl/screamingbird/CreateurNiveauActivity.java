@@ -6,79 +6,91 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.app.Activity;
-import android.content.ClipData;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
-import android.os.Bundle;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.DragEvent;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.DragShadowBuilder;
 import android.view.View.OnDragListener;
 import android.view.View.OnTouchListener;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import java.util.ArrayList;
 
+import hutoch.m2dl.screamingbird.utils.FinishLine;
 import hutoch.m2dl.screamingbird.utils.Obstacle;
 
 public class CreateurNiveauActivity extends AppCompatActivity implements OnTouchListener, OnDragListener {
 
-    public static Bitmap square;
+    public static Bitmap obstacle;
+    public static Bitmap finishLineBitmap;
     public static ArrayList<Obstacle> listeObstacles;
     public AnimatedView animatedView = null;
     public int posX = 0;
     public int oldX = 0;
     public int obstacleSizeX = 500;
     public int obstacleSizeY = 1000;
+    public int finishLineSizeX = 200;
+    public int finishLineSizeY = 200;
+    public static FinishLine finishLine = null;
+    public int idObstacle;
+    public int idFinishLine;
+    public int idDragged;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_createur_niveau);
 
-        findViewById(R.id.myimage3).setOnTouchListener(this);
+        findViewById(R.id.obstacle).setOnTouchListener(this);
+        findViewById(R.id.finish).setOnTouchListener(this);
         findViewById(R.id.zoneDeJeu).setOnDragListener(this);
         //findViewById(R.id.bottomleft).setOnDragListener(this);
 
         animatedView = findViewById(R.id.zoneDeJeu);
         animatedView.setOnTouchListener(this);
 
+        idObstacle = findViewById(R.id.obstacle).getId();
+        idFinishLine = findViewById(R.id.finish).getId();
+
         listeObstacles = new ArrayList<Obstacle>();
-        square = BitmapFactory.decodeResource(getResources(), R.drawable.square);
-        Drawable d = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(square, obstacleSizeX, obstacleSizeY, true));
-        square = ((BitmapDrawable) d).getBitmap();
+        obstacle = BitmapFactory.decodeResource(getResources(), R.drawable.square);
+        Drawable dO = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(obstacle, obstacleSizeX, obstacleSizeY, true));
+        obstacle = ((BitmapDrawable) dO).getBitmap();
+
+        finishLineBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.finishline);
+        Drawable dF = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(finishLineBitmap, finishLineSizeX, finishLineSizeY, true));
+        finishLineBitmap = ((BitmapDrawable) dF).getBitmap();
     }
 
 
     public boolean onTouch(View view, MotionEvent motionEvent) {
         if(!view.equals(animatedView)) {
-            if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+            if(motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                idDragged = view.getId();
                 DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
                 view.startDrag(null, shadowBuilder, view, 0);
                 return true;
             }
         } else {
-            if (motionEvent.getAction() == MotionEvent.ACTION_MOVE) {
+            if(motionEvent.getAction() == MotionEvent.ACTION_MOVE) {
                 posX = (int) motionEvent.getRawX();
 
                 int diffPosX = posX - oldX;
                 oldX = posX;
 
-                if (diffPosX > 0){
+                if(diffPosX > 0){
                     for (int i = 0; i < listeObstacles.size(); i++) {
                         listeObstacles.get(i).toRight();
                     }
+                    if(finishLine != null) finishLine.toRight();
                 } else {
                     for (int i = 0; i < listeObstacles.size(); i++) {
                         listeObstacles.get(i).toLeft();
                     }
+                    if(finishLine != null) finishLine.toLeft();
                 }
             }
         }
@@ -95,7 +107,11 @@ public class CreateurNiveauActivity extends AppCompatActivity implements OnTouch
             case DragEvent.ACTION_DRAG_EXITED:
                 break;
             case DragEvent.ACTION_DROP:
-                listeObstacles.add(new Obstacle(dragevent.getX() - obstacleSizeX/2, dragevent.getY() - obstacleSizeY/3));
+                if(idDragged == idObstacle) {
+                    listeObstacles.add(new Obstacle(dragevent.getX() - obstacleSizeX/2, dragevent.getY() - obstacleSizeY/3));
+                } else if (idDragged == idFinishLine) {
+                    finishLine = new FinishLine(dragevent.getX() - finishLineSizeX/2, dragevent.getY() - finishLineSizeY/2);
+                }
                 break;
             case DragEvent.ACTION_DRAG_ENDED:
                 break;
@@ -126,8 +142,11 @@ public class CreateurNiveauActivity extends AppCompatActivity implements OnTouch
         protected void onDraw(Canvas canvas) {
             //Draw
             for (int i = 0; i < listeObstacles.size(); i++) {
-                canvas.drawBitmap(square, listeObstacles.get(i).getX(), listeObstacles.get(i).getY(), null);
+                canvas.drawBitmap(obstacle, listeObstacles.get(i).getX(), listeObstacles.get(i).getY(), null);
                 //listeObstacles.get(i).toLeft();
+            }
+            if(finishLine != null) {
+                canvas.drawBitmap(finishLineBitmap, finishLine.getX(), finishLine.getY(), null);
             }
             invalidate();
         }
