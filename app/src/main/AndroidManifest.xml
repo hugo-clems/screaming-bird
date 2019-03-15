@@ -49,7 +49,7 @@
                 android:value=".MainActivity" />
         </activity>
         <activity
-            android:name=".jeu.JeuActivity"
+            android:name=".JeuActivity"
             android:label="@string/title_jeu"
             android:parentActivityName=".SelecteurNiveauActivity"
             android:screenOrientation="landscape">
@@ -60,11 +60,11 @@
         <activity
             android:name=".FinDeJeuActivity"
             android:label="@string/title_fin_de_jeu"
-            android:parentActivityName=".jeu.JeuActivity"
+            android:parentActivityName=".JeuActivity"
             android:screenOrientation="landscape">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".jeu.JeuActivity" />
+                android:value=".JeuActivity" />
         </activity>
     </application>
 

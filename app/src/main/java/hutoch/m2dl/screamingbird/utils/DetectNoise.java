@@ -1,4 +1,4 @@
-package hutoch.m2dl.screamingbird.jeu;
+package hutoch.m2dl.screamingbird.utils;
 
 import android.media.MediaRecorder;
 

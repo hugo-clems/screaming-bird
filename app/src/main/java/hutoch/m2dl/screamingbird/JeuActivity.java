@@ -1,4 +1,4 @@
-package hutoch.m2dl.screamingbird.jeu;
+package hutoch.m2dl.screamingbird;
 
 import android.Manifest;
 import android.app.Activity;
@@ -25,7 +25,7 @@ import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
 
-import hutoch.m2dl.screamingbird.R;
+import hutoch.m2dl.screamingbird.utils.DetectNoise;
 import hutoch.m2dl.screamingbird.utils.Obstacle;
 
 /**
