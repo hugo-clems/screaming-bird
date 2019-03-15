@@ -23,4 +23,9 @@
 
     <!-- FinDeJeuActivity -->
     <string name="title_fin_de_jeu">Partie terminée !</string>
+
+    <!-- GameOverActivity -->
+    <string name="title_game_over">Game Over !</string>
+    <string name="tv_game_over">Perdu !</string>
+    <string name="btn_retour_accueil">Retour à l\'accueil</string>
 </resources>

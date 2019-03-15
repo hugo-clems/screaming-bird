@@ -3,6 +3,7 @@ package hutoch.m2dl.screamingbird;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -24,6 +25,8 @@ import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
+
+import java.util.List;
 
 import hutoch.m2dl.screamingbird.utils.DetectNoise;
 import hutoch.m2dl.screamingbird.utils.Obstacle;
@@ -49,6 +52,11 @@ public class JeuActivity extends Activity implements View.OnTouchListener, Senso
     public static Bitmap square;
     public static Obstacle obstacle;
     public static final int TAILLE_OBSTACLE = 154;
+
+    // Vies
+    public static Bitmap coeur;
+    public static final int TAILLE_COEUR = 150;
+    public static int nbVies;
 
     // Le saut
     public Handler handler = new Handler();
@@ -134,8 +142,12 @@ public class JeuActivity extends Activity implements View.OnTouchListener, Senso
     private Runnable fall = new Runnable() {
         public void run() {
             if (!isOnObstacle()) {
-                personnagePositionTop += 10;
-                handler.postDelayed(fall, VITESSE);
+                if (isOnDeathZone()) {
+                    killPersonnage();
+                } else {
+                    personnagePositionTop += 10;
+                    handler.postDelayed(fall, VITESSE);
+                }
             } else {
                 canJump = true;
             }
@@ -159,6 +171,31 @@ public class JeuActivity extends Activity implements View.OnTouchListener, Senso
     }
 
     /**
+     * Quand on touche le bas de l'écran.
+     * @return true si on touche le bas de l'écran, false sinon
+     */
+    private boolean isOnDeathZone() {
+        int posY = personnagePositionTop + HAUTEUR_PERSONNAGE;
+
+        if (posY > screenHeight && posY < screenHeight + TAILLE_OBSTACLE) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private void killPersonnage() {
+        if (nbVies > 1) {
+            nbVies--;
+            canJump = true; // TODO respawn
+        } else {
+            // Redirection vers l'écran de GameOver
+            Intent intent = new Intent(this, GameOverActivity.class);
+            startActivity(intent);
+        }
+    }
+
+    /**
      * Zone de jeu.
      */
     public static class AnimatedView extends android.support.v7.widget.AppCompatImageView {
@@ -179,22 +216,34 @@ public class JeuActivity extends Activity implements View.OnTouchListener, Senso
         }
 
         public void init() {
+            nbVies = 3;
+
+            // Personnage
             personnage = BitmapFactory.decodeResource(getResources(), R.drawable.bird);
             Drawable d = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(personnage, LARGEUR_PERSONNAGE, HAUTEUR_PERSONNAGE, true));
             personnage = ((BitmapDrawable) d).getBitmap();
             personnagePositionLeft = screenWidth / 2;
             personnagePositionTop = screenHeight - HAUTEUR_PERSONNAGE;
 
+            // Obstacle
             square = BitmapFactory.decodeResource(getResources(), R.drawable.square);
             Drawable d2 = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(square, TAILLE_OBSTACLE, TAILLE_OBSTACLE, true));
             square = ((BitmapDrawable) d2).getBitmap();
             obstacle = new Obstacle(personnagePositionLeft, personnagePositionTop - TAILLE_OBSTACLE);
+
+            // Coeur
+            coeur = BitmapFactory.decodeResource(getResources(), R.drawable.coeur);
+            Drawable d3 = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(coeur, TAILLE_COEUR, TAILLE_COEUR, true));
+            coeur = ((BitmapDrawable) d3).getBitmap();
         }
 
         @Override
         protected void onDraw(Canvas canvas) {
             canvas.drawBitmap(personnage, personnagePositionLeft, personnagePositionTop, null);
             canvas.drawBitmap(square, obstacle.getX(), obstacle.getY(), null);
+            for (int i = 1; i <= nbVies; i++) {
+                canvas.drawBitmap(coeur, screenWidth - TAILLE_COEUR*i, 0, null);
+            }
             invalidate();
         }
 
@@ -258,7 +307,6 @@ public class JeuActivity extends Activity implements View.OnTouchListener, Senso
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-            Log.i("coucou", "ça bouge");
             int xValue = (int) event.values[1];
             obstacle.setRate(xValue);
             obstacle.tick();
@@ -289,8 +337,14 @@ public class JeuActivity extends Activity implements View.OnTouchListener, Senso
                 startNoiseSensor();
             }
         }
-        sensorManager.registerListener(this, accelerometer,
-                SensorManager.SENSOR_DELAY_GAME);
+        sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_GAME);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        stopNoiseSensor();
+        sensorManager.unregisterListener(this);
     }
 
 }

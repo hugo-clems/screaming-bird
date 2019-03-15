@@ -66,6 +66,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".JeuActivity" />
         </activity>
+        <activity
+            android:name=".GameOverActivity"
+            android:label="@string/title_game_over"
+            android:parentActivityName=".JeuActivity"
+            android:screenOrientation="landscape">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".JeuActivity" />
+        </activity>
     </application>
 
 </manifest>
