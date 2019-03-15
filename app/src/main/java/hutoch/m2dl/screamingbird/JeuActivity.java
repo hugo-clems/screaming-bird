@@ -5,6 +5,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -26,9 +28,12 @@ import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import hutoch.m2dl.screamingbird.datacontracts.LevelContract;
 import hutoch.m2dl.screamingbird.utils.DetectNoise;
+import hutoch.m2dl.screamingbird.utils.FinishLine;
 import hutoch.m2dl.screamingbird.utils.Obstacle;
 
 /**
@@ -52,6 +57,9 @@ public class JeuActivity extends Activity implements View.OnTouchListener, Senso
     public static Bitmap square;
     public static Obstacle obstacle;
     public static final int TAILLE_OBSTACLE = 154;
+    public static FinishLine finishLine;
+    public static ArrayList<Obstacle> listeObstacles;
+    private final String OBSTACLE_TYPE = "OBSTACLE";
 
     // Vies
     public static Bitmap coeur;
@@ -77,6 +85,8 @@ public class JeuActivity extends Activity implements View.OnTouchListener, Senso
     // Accelero
     private Sensor accelerometer;
 
+    private int levelId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,9 +99,15 @@ public class JeuActivity extends Activity implements View.OnTouchListener, Senso
         screenWidth = size.x;
         screenHeight = size.y;
 
+        levelId = (int) getIntent().getSerializableExtra("levelId");
+
         this.animatedView = findViewById(R.id.zoneDeJeu);
         this.animatedView.setOnTouchListener(this);
         this.animatedView.init();
+
+        listeObstacles = new ArrayList<>();
+
+        loadLevel();
 
         if (!hasMicroPermission()) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, 1);
@@ -247,6 +263,47 @@ public class JeuActivity extends Activity implements View.OnTouchListener, Senso
             invalidate();
         }
 
+    }
+
+    /**
+     * Charge le niveau depuis la bdd
+     */
+    private void loadLevel() {
+        AppDatabaseSQLite dbHelper = new AppDatabaseSQLite(getApplicationContext());
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        String[] projection = {
+                LevelContract.ObstacleEntry.COLUMN_NAME_X,
+                LevelContract.ObstacleEntry.COLUMN_NAME_Y,
+                LevelContract.ObstacleEntry.COLUMN_NAME_TYPE
+        };
+
+        String selection = LevelContract.ObstacleEntry.COLUMN_NAME_LEVEL + " = ?";
+        String[] selectionArgs = { "" + levelId };
+
+        Cursor cursor = db.query(
+                LevelContract.ObstacleEntry.TABLE_NAME,   // The table to query
+                projection,             // The array of columns to return (pass null to get all)
+                selection,              // The columns for the WHERE clause
+                selectionArgs,          // The values for the WHERE clause
+                null,                   // don't group the rows
+                null,                   // don't filter by row groups
+                null               // The sort order
+        );
+
+        while(cursor.moveToNext()) {
+            float x = cursor.getLong(cursor.getColumnIndexOrThrow(LevelContract.ObstacleEntry.COLUMN_NAME_X));
+            float y = cursor.getLong(cursor.getColumnIndexOrThrow(LevelContract.ObstacleEntry.COLUMN_NAME_Y));
+            String type = cursor.getString(cursor.getColumnIndexOrThrow(LevelContract.ObstacleEntry.COLUMN_NAME_TYPE));
+
+            if(OBSTACLE_TYPE.equals(type)) {
+                listeObstacles.add(new Obstacle(x, y));
+            } else {
+                finishLine = new FinishLine(x, y);
+            }
+
+        }
+        cursor.close();
     }
 
     /* ***** Capteur Sonore ***** */

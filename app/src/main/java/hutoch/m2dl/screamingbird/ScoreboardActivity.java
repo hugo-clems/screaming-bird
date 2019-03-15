@@ -52,7 +52,7 @@ public class ScoreboardActivity extends AppCompatActivity {
             String nick = cursor.getString(cursor.getColumnIndexOrThrow(ScoreContract.ScoreEntry.COLUMN_NAME_NICKNAME));
             int score = cursor.getInt(cursor.getColumnIndexOrThrow(ScoreContract.ScoreEntry.COLUMN_NAME_SCORE));
 
-            scoreList.add(new String(nick + " - " + score));
+            scoreList.add(nick + " - " + score);
         }
 
 
