@@ -52,4 +52,13 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    /**
+     * Affiche la page A Propos.
+     * @param v non utilisé
+     */
+    public void clicAbout(View v) {
+        Intent intent = new Intent(this, AboutActivity.class);
+        startActivity(intent);
+    }
+
 }

@@ -6,6 +6,7 @@
     <string name="btn_jouer">Jouer</string>
     <string name="btn_creer_niveau">Créer un niveau</string>
     <string name="btn_scoreboard">Tableaux des scores</string>
+    <string name="btn_about">A Propos</string>
 
     <!-- CreateurNiveauActivity -->
     <string name="title_createur_niveau">Créer un niveau</string>
@@ -28,4 +29,13 @@
     <string name="title_game_over">Game Over !</string>
     <string name="tv_game_over">Perdu !</string>
     <string name="btn_retour_accueil">Retour à l\'accueil</string>
+
+    <!-- About -->
+    <string name="title_about">A Propos</string>
+    <string name="tv_hugo">Hugo CLEMENT</string>
+    <string name="tv_thomas">Thomas GANTHIER</string>
+    <string name="tv_chris">Christopher LOPES</string>
+    <string name="tv_year">2018&#8211;2019</string>
+    <string name="desc_dl">Logo MDL</string>
+    <string name="desc_ups">Logo UPS</string>
 </resources>

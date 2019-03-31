@@ -28,6 +28,7 @@
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/btn_param"
                 android:onClick="clicParam"
+                android:visibility="invisible"
                 app:srcCompat="@drawable/engrenage" />
 
         </LinearLayout>
@@ -67,6 +68,18 @@
             android:layout_height="wrap_content"
             android:onClick="clicScoreboard"
             android:text="@string/btn_scoreboard" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2" />
+
+        <Button
+            android:id="@+id/btnAbout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="clicAbout"
+            android:text="@string/btn_about" />
 
         <Space
             android:layout_width="match_parent"
