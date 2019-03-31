@@ -34,6 +34,7 @@
 
     <!-- About -->
     <string name="title_about">A Propos</string>
+    <string name="tv_about">Réalisé en 1 journée dans le cadre du Challenge Android du Master 2 Développement Logiciel à Paul Sabatier</string>
     <string name="tv_hugo">Hugo CLEMENT</string>
     <string name="tv_thomas">Thomas GANTHIER</string>
     <string name="tv_chris">Christopher LOPES</string>
