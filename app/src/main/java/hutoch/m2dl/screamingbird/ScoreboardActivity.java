@@ -45,7 +45,7 @@ public class ScoreboardActivity extends AppCompatActivity {
                 null,
                 null,
                 null,
-                null
+                ScoreContract.ScoreEntry.COLUMN_NAME_SCORE + " DESC"
         );
 
         while(cursor.moveToNext()) {

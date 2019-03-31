@@ -68,6 +68,7 @@ public class JeuActivity extends Activity implements View.OnTouchListener, Senso
     public static Bitmap coeur;
     public static final int TAILLE_COEUR = 150;
     public static int nbVies;
+    public int score = 0;
 
     // Le saut
     public Handler handler = new Handler();
@@ -106,6 +107,7 @@ public class JeuActivity extends Activity implements View.OnTouchListener, Senso
 
         listeObstacles = new ArrayList<>();
         loadLevel();
+        score = listeObstacles.size();
 
         this.animatedView = findViewById(R.id.zoneDeJeu);
         this.animatedView.setOnTouchListener(this);
@@ -216,7 +218,7 @@ public class JeuActivity extends Activity implements View.OnTouchListener, Senso
         if (posX > finishLine.getX() && posX < finishLine.getX() + LARGEUR_FINISH_LINE
                 && posY > finishLine.getY() && posY < finishLine.getY() + HAUTEUR_FINISH_LINE) {
             Intent intent = new Intent(this, FinDeJeuActivity.class);
-            intent.putExtra("score", 0);
+            intent.putExtra("score", score - (3 - nbVies));
             intent.putExtra("nbVies", nbVies);
             startActivity(intent);
         }

@@ -24,6 +24,8 @@
 
     <!-- FinDeJeuActivity -->
     <string name="title_fin_de_jeu">Partie terminée !</string>
+    <string name="tv_nb_vies">Vies restantes :</string>
+    <string name="tv_score">Score :</string>
 
     <!-- GameOverActivity -->
     <string name="title_game_over">Game Over !</string>

@@ -32,8 +32,8 @@ public class FinDeJeuActivity extends AppCompatActivity {
         tvScoreTemps = findViewById(R.id.tvScoreTemps);
         tvNbVies = findViewById(R.id.tvNbVies);
 
-        tvNbVies.setText("Nb vies restantes : " + nbVies);
-        tvScoreTemps.setText("Temps : " + score);
+        tvNbVies.setText(getResources().getString(R.string.tv_nb_vies) + " " + nbVies);
+        tvScoreTemps.setText(getResources().getString(R.string.tv_score) + " " + score);
     }
 
     /**
